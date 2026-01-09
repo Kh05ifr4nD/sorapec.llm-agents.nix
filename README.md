@@ -415,7 +415,7 @@ Nix packages for AI coding agents and development tools. Automatically updated d
 
 - **Source**: unknown
 - **License**: MIT
-- **Homepage**: https://github.com/Fission-AI/Sorapec
+- **Homepage**: https://github.com/Kh05ifr4nD/sorapec
 - **Usage**: `nix run github:numtide/llm-agents.nix#sorapec -- --help`
 - **Nix**: [packages/sorapec/package.nix](packages/sorapec/package.nix)
 

@@ -2,21 +2,27 @@
   bash,
   coreutils,
   deno,
-  fetchFromGitHub,
+  fetchzip,
   lib,
   stdenv,
+  versionCheckHook,
+  versionCheckHomeHook,
 }:
 
-stdenv.mkDerivation (finalAttrs: {
+let
   pname = "sorapec";
-  version = "0.17.2";
+  versionData = builtins.fromJSON (builtins.readFile ./hashes.json);
+  inherit (versionData) version hash;
 
-  src = fetchFromGitHub {
-    owner = "Kh05ifr4nD";
-    repo = "sorapec";
-    rev = "df57ee1a83a28c7c5a218be79455d1a61bc12205";
-    hash = "sha256-sQFd/I1oLwhUZsfHCyBqa1qKWZuJESa8bTXbXx0MyoM=";
+  src = fetchzip {
+    url = "https://github.com/Kh05ifr4nD/sorapec/releases/download/v${version}/sorapec-${version}-src.tar.gz";
+    inherit hash;
+    stripRoot = false;
   };
+
+in
+stdenv.mkDerivation {
+  inherit pname version src;
 
   dontBuild = true;
 
@@ -39,7 +45,7 @@ stdenv.mkDerivation (finalAttrs: {
     set -euo pipefail
 
     cache_root="''${XDG_CACHE_HOME:-$HOME/.cache}"
-    cache_dir="$cache_root/sorapec/@version@-$(basename "@out@")"
+    cache_dir="$cache_root/sorapec/@version@"
     installed_marker="$cache_dir/.installed"
 
     if [ ! -f "$installed_marker" ]; then
@@ -51,7 +57,7 @@ stdenv.mkDerivation (finalAttrs: {
 
     export DENO_DIR="''${DENO_DIR:-$cache_root/deno}"
 
-    exec "@deno@" run -A --no-prompt --config "$cache_dir/deno.json" --sloppy-imports "$cache_dir/src/cli/index.ts" "$@"
+    exec "@deno@" run -q -A --no-prompt --config "$cache_dir/deno.json" "$cache_dir/src/cli/index.ts" "$@"
     EOF
 
     substituteInPlace "$out/bin/sorapec" \
@@ -62,18 +68,25 @@ stdenv.mkDerivation (finalAttrs: {
       --replace-fail "@chmod@" "${coreutils}/bin/chmod" \
       --replace-fail "@touch@" "${coreutils}/bin/touch" \
       --replace-fail "@out@" "$out" \
-      --replace-fail "@version@" "${finalAttrs.version}"
+      --replace-fail "@version@" "${version}"
 
     chmod +x "$out/bin/sorapec"
 
     runHook postInstall
   '';
 
+  doInstallCheck = true;
+  nativeInstallCheckInputs = [
+    versionCheckHook
+    versionCheckHomeHook
+  ];
+  versionCheckProgramArg = [ "--version" ];
+
   meta = {
     description = "AI-native system for spec-driven development";
-    homepage = "https://github.com/Fission-AI/Sorapec";
+    homepage = "https://github.com/Kh05ifr4nD/sorapec";
     license = lib.licenses.mit;
     mainProgram = "sorapec";
     platforms = lib.platforms.unix;
   };
-})
+}
