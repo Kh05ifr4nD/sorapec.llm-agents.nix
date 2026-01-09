@@ -14,8 +14,8 @@ stdenv.mkDerivation (finalAttrs: {
   src = fetchFromGitHub {
     owner = "Kh05ifr4nD";
     repo = "sorapec";
-    rev = "d234587961d945aae6895aa9eaa236c0e26cf850";
-    hash = "sha256-Kusy5oQSTOeNKPeQmfdNJFfT2JHw3qw7h6xWGSig+7g=";
+    rev = "df57ee1a83a28c7c5a218be79455d1a61bc12205";
+    hash = "sha256-sQFd/I1oLwhUZsfHCyBqa1qKWZuJESa8bTXbXx0MyoM=";
   };
 
   dontBuild = true;
