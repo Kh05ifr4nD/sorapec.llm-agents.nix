@@ -8,46 +8,8 @@ Nix flake packaging AI coding agents and development tools. Automatically update
 
 <!-- BEGIN GENERATED PACKAGE DOCS -->
 
-<details>
-<summary><strong>backlog-md</strong> - Backlog.md - A tool for managing project collaboration between humans and AI Agents in a git ecosystem</summary>
+### AI Coding Agents
 
-- **Source**: binary
-- **License**: MIT
-- **Homepage**: https://github.com/MrLesk/Backlog.md
-- **Usage**: `nix run github:Kh05ifr4nD/agentNix#backlog-md -- --help`
-- **Nix**: [packages/backlog-md/package.nix](packages/backlog-md/package.nix)
-
-</details>
-<details>
-<summary><strong>beads</strong> - A distributed issue tracker designed for AI-supervised coding workflows</summary>
-
-- **Source**: source
-- **License**: MIT
-- **Homepage**: https://github.com/steveyegge/beads
-- **Usage**: `nix run github:Kh05ifr4nD/agentNix#beads -- --help`
-- **Nix**: [packages/beads/package.nix](packages/beads/package.nix)
-
-</details>
-<details>
-<summary><strong>catnip</strong> - Developer environment that's like catnip for agentic programming</summary>
-
-- **Source**: binary
-- **License**: Apache-2.0
-- **Homepage**: https://github.com/wandb/catnip
-- **Usage**: `nix run github:Kh05ifr4nD/agentNix#catnip -- --help`
-- **Nix**: [packages/catnip/package.nix](packages/catnip/package.nix)
-
-</details>
-<details>
-<summary><strong>ccusage-codex</strong> - Usage analysis tool for OpenAI Codex sessions</summary>
-
-- **Source**: bytecode
-- **License**: MIT
-- **Homepage**: https://github.com/ryoppippi/ccusage
-- **Usage**: `nix run github:Kh05ifr4nD/agentNix#ccusage-codex -- --help`
-- **Nix**: [packages/ccusage-codex/package.nix](packages/ccusage-codex/package.nix)
-
-</details>
 <details>
 <summary><strong>code</strong> - Fork of codex. Orchestrate agents from OpenAI, Gemini, and other providers.</summary>
 
@@ -59,16 +21,6 @@ Nix flake packaging AI coding agents and development tools. Automatically update
 
 </details>
 <details>
-<summary><strong>coderabbit-cli</strong> - AI-powered code review CLI tool</summary>
-
-- **Source**: binary
-- **License**: unfree
-- **Homepage**: https://coderabbit.ai
-- **Usage**: `nix run github:Kh05ifr4nD/agentNix#coderabbit-cli -- --help`
-- **Nix**: [packages/coderabbit-cli/package.nix](packages/coderabbit-cli/package.nix)
-
-</details>
-<details>
 <summary><strong>codex</strong> - OpenAI Codex CLI - a coding agent that runs locally on your computer</summary>
 
 - **Source**: source
@@ -76,27 +28,6 @@ Nix flake packaging AI coding agents and development tools. Automatically update
 - **Homepage**: https://github.com/openai/codex
 - **Usage**: `nix run github:Kh05ifr4nD/agentNix#codex -- --help`
 - **Nix**: [packages/codex/package.nix](packages/codex/package.nix)
-
-</details>
-<details>
-<summary><strong>codex-acp</strong> - An ACP-compatible coding agent powered by Codex</summary>
-
-- **Source**: source
-- **License**: Apache-2.0
-- **Homepage**: https://github.com/zed-industries/codex-acp
-- **Usage**: `nix run github:Kh05ifr4nD/agentNix#codex-acp -- --help`
-- **Nix**: [packages/codex-acp/package.nix](packages/codex-acp/package.nix)
-- **Documentation**: See [packages/codex-acp/README.md](packages/codex-acp/README.md) for detailed usage
-
-</details>
-<details>
-<summary><strong>coding-agent-search</strong> - Unified, high-performance TUI to index and search your local coding agent history</summary>
-
-- **Source**: source
-- **License**: MIT
-- **Homepage**: https://github.com/Dicklesworthstone/coding_agent_session_search
-- **Usage**: `nix run github:Kh05ifr4nD/agentNix#coding-agent-search -- --help`
-- **Nix**: [packages/coding-agent-search/package.nix](packages/coding-agent-search/package.nix)
 
 </details>
 <details>
@@ -161,16 +92,6 @@ Nix flake packaging AI coding agents and development tools. Automatically update
 
 </details>
 <details>
-<summary><strong>handy</strong> - Fast and accurate local transcription app using AI models</summary>
-
-- **Source**: binary
-- **License**: unfree
-- **Homepage**: https://handy.computer/
-- **Usage**: `nix run github:Kh05ifr4nD/agentNix#handy -- --help`
-- **Nix**: [packages/handy/package.nix](packages/handy/package.nix)
-
-</details>
-<details>
 <summary><strong>kilocode-cli</strong> - The open-source AI coding agent. Now available in your terminal.</summary>
 
 - **Source**: bytecode
@@ -201,33 +122,13 @@ Nix flake packaging AI coding agents and development tools. Automatically update
 
 </details>
 <details>
-<summary><strong>oh-my-opencode</strong> - OpenCode plugin - custom agents (oracle, librarian) and enhanced features</summary>
-
-- **Source**: binary
-- **License**: unfree
-- **Homepage**: https://github.com/code-yeongyu/oh-my-opencode
-- **Usage**: `nix run github:Kh05ifr4nD/agentNix#oh-my-opencode -- --help`
-- **Nix**: [packages/oh-my-opencode/package.nix](packages/oh-my-opencode/package.nix)
-
-</details>
-<details>
 <summary><strong>opencode</strong> - AI coding agent built for the terminal</summary>
 
 - **Source**: binary
 - **License**: MIT
-- **Homepage**: https://github.com/sst/opencode
+- **Homepage**: https://github.com/anomalyco/opencode
 - **Usage**: `nix run github:Kh05ifr4nD/agentNix#opencode -- --help`
 - **Nix**: [packages/opencode/package.nix](packages/opencode/package.nix)
-
-</details>
-<details>
-<summary><strong>openskills</strong> - Universal skills loader for AI coding agents - install and load Anthropic SKILL.md format skills in any agent</summary>
-
-- **Source**: source
-- **License**: Apache-2.0
-- **Homepage**: https://github.com/numman-ali/openskills
-- **Usage**: `nix run github:Kh05ifr4nD/agentNix#openskills -- --help`
-- **Nix**: [packages/openskills/package.nix](packages/openskills/package.nix)
 
 </details>
 <details>
@@ -260,14 +161,51 @@ Nix flake packaging AI coding agents and development tools. Automatically update
 - **Nix**: [packages/qwen-code/package.nix](packages/qwen-code/package.nix)
 
 </details>
-<details>
-<summary><strong>sorapec</strong> - AI-native system for spec-driven development</summary>
 
-- **Source**: unknown
+### Codex Ecosystem
+
+<details>
+<summary><strong>ccusage-codex</strong> - Usage analysis tool for OpenAI Codex sessions</summary>
+
+- **Source**: bytecode
 - **License**: MIT
-- **Homepage**: https://github.com/Kh05ifr4nD/sorapec
-- **Usage**: `nix run github:Kh05ifr4nD/agentNix#sorapec -- --help`
-- **Nix**: [packages/sorapec/package.nix](packages/sorapec/package.nix)
+- **Homepage**: https://github.com/ryoppippi/ccusage
+- **Usage**: `nix run github:Kh05ifr4nD/agentNix#ccusage-codex -- --help`
+- **Nix**: [packages/ccusage-codex/package.nix](packages/ccusage-codex/package.nix)
+
+</details>
+<details>
+<summary><strong>codex-acp</strong> - An ACP-compatible coding agent powered by Codex</summary>
+
+- **Source**: source
+- **License**: Apache-2.0
+- **Homepage**: https://github.com/zed-industries/codex-acp
+- **Usage**: `nix run github:Kh05ifr4nD/agentNix#codex-acp -- --help`
+- **Nix**: [packages/codex-acp/package.nix](packages/codex-acp/package.nix)
+- **Documentation**: See [packages/codex-acp/README.md](packages/codex-acp/README.md) for detailed usage
+
+</details>
+
+### Workflow & Project Management
+
+<details>
+<summary><strong>backlog-md</strong> - Backlog.md - A tool for managing project collaboration between humans and AI Agents in a git ecosystem</summary>
+
+- **Source**: binary
+- **License**: MIT
+- **Homepage**: https://github.com/MrLesk/Backlog.md
+- **Usage**: `nix run github:Kh05ifr4nD/agentNix#backlog-md -- --help`
+- **Nix**: [packages/backlog-md/package.nix](packages/backlog-md/package.nix)
+
+</details>
+<details>
+<summary><strong>beads</strong> - A distributed issue tracker designed for AI-supervised coding workflows</summary>
+
+- **Source**: source
+- **License**: MIT
+- **Homepage**: https://github.com/steveyegge/beads
+- **Usage**: `nix run github:Kh05ifr4nD/agentNix#beads -- --help`
+- **Nix**: [packages/beads/package.nix](packages/beads/package.nix)
 
 </details>
 <details>
@@ -278,6 +216,95 @@ Nix flake packaging AI coding agents and development tools. Automatically update
 - **Homepage**: https://github.com/github/spec-kit
 - **Usage**: `nix run github:Kh05ifr4nD/agentNix#spec-kit -- --help`
 - **Nix**: [packages/spec-kit/package.nix](packages/spec-kit/package.nix)
+
+</details>
+
+### Code Review
+
+<details>
+<summary><strong>coderabbit-cli</strong> - AI-powered code review CLI tool</summary>
+
+- **Source**: binary
+- **License**: unfree
+- **Homepage**: https://coderabbit.ai
+- **Usage**: `nix run github:Kh05ifr4nD/agentNix#coderabbit-cli -- --help`
+- **Nix**: [packages/coderabbit-cli/package.nix](packages/coderabbit-cli/package.nix)
+
+</details>
+<details>
+<summary><strong>tuicr</strong> - Review AI-generated diffs like a GitHub pull request, right from your terminal</summary>
+
+- **Source**: source
+- **License**: MIT
+- **Homepage**: https://github.com/agavra/tuicr
+- **Usage**: `nix run github:Kh05ifr4nD/agentNix#tuicr -- --help`
+- **Nix**: [packages/tuicr/package.nix](packages/tuicr/package.nix)
+
+</details>
+
+### Utilities
+
+<details>
+<summary><strong>catnip</strong> - Developer environment that's like catnip for agentic programming</summary>
+
+- **Source**: binary
+- **License**: Apache-2.0
+- **Homepage**: https://github.com/wandb/catnip
+- **Usage**: `nix run github:Kh05ifr4nD/agentNix#catnip -- --help`
+- **Nix**: [packages/catnip/package.nix](packages/catnip/package.nix)
+
+</details>
+<details>
+<summary><strong>coding-agent-search</strong> - Unified, high-performance TUI to index and search your local coding agent history</summary>
+
+- **Source**: source
+- **License**: MIT
+- **Homepage**: https://github.com/Dicklesworthstone/coding_agent_session_search
+- **Usage**: `nix run github:Kh05ifr4nD/agentNix#coding-agent-search -- --help`
+- **Nix**: [packages/coding-agent-search/package.nix](packages/coding-agent-search/package.nix)
+
+</details>
+<details>
+<summary><strong>handy</strong> - Fast and accurate local transcription app using AI models</summary>
+
+- **Source**: binary
+- **License**: unfree
+- **Homepage**: https://handy.computer/
+- **Usage**: `nix run github:Kh05ifr4nD/agentNix#handy -- --help`
+- **Nix**: [packages/handy/package.nix](packages/handy/package.nix)
+
+</details>
+<details>
+<summary><strong>openskills</strong> - Universal skills loader for AI coding agents - install and load Anthropic SKILL.md format skills in any agent</summary>
+
+- **Source**: source
+- **License**: Apache-2.0
+- **Homepage**: https://github.com/numman-ali/openskills
+- **Usage**: `nix run github:Kh05ifr4nD/agentNix#openskills -- --help`
+- **Nix**: [packages/openskills/package.nix](packages/openskills/package.nix)
+
+</details>
+
+### Uncategorized
+
+<details>
+<summary><strong>oh-my-opencode</strong> - OpenCode plugin - custom agents (oracle, librarian) and enhanced features</summary>
+
+- **Source**: binary
+- **License**: unfree
+- **Homepage**: https://github.com/code-yeongyu/oh-my-opencode
+- **Usage**: `nix run github:Kh05ifr4nD/agentNix#oh-my-opencode -- --help`
+- **Nix**: [packages/oh-my-opencode/package.nix](packages/oh-my-opencode/package.nix)
+
+</details>
+<details>
+<summary><strong>sorapec</strong> - AI-native system for spec-driven development</summary>
+
+- **Source**: unknown
+- **License**: MIT
+- **Homepage**: https://github.com/Kh05ifr4nD/sorapec
+- **Usage**: `nix run github:Kh05ifr4nD/agentNix#sorapec -- --help`
+- **Nix**: [packages/sorapec/package.nix](packages/sorapec/package.nix)
 
 </details>
 <!-- END GENERATED PACKAGE DOCS -->
