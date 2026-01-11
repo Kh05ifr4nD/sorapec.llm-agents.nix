@@ -9,11 +9,11 @@
 
 stdenv.mkDerivation rec {
   pname = "letta-code";
-  version = "0.12.4";
+  version = "0.12.5";
 
   src = fetchzip {
     url = "https://registry.npmjs.org/@letta-ai/letta-code/-/letta-code-${version}.tgz";
-    hash = "sha256-3lxlxlQ3hLMZiXke5AVhuUccNdt1g5ThmE3MeVKcIGk=";
+    hash = "sha256-L57uuNi93rczLQr+9X9me2V0oTGbtAF3diQ/T+baDWs=";
   };
 
   nativeBuildInputs = [ nodejs ];
@@ -41,6 +41,8 @@ stdenv.mkDerivation rec {
     versionCheckHomeHook
   ];
   versionCheckProgramArg = [ "--version" ];
+
+  passthru.category = "AI Coding Agents";
 
   meta = with lib; {
     description = "Memory-first coding agent that learns and evolves across sessions";

@@ -10,11 +10,11 @@
 
 stdenv.mkDerivation rec {
   pname = "ccusage-codex";
-  version = "17.2.1";
+  version = "18.0.5";
 
   src = fetchzip {
     url = "https://registry.npmjs.org/@ccusage/codex/-/codex-${version}.tgz";
-    hash = "sha256-112GJALDddmgEF5cU7Pi/mmeRldd1bYVogs/iEYVB1I=";
+    hash = "sha256-IZTYYNc2CGscQaIgSDderDZWKj6aTjCAKC/eA/AzOmY=";
   };
 
   nativeBuildInputs = [ bun ];
@@ -41,6 +41,8 @@ stdenv.mkDerivation rec {
     versionCheckHook
     versionCheckHomeHook
   ];
+
+  passthru.category = "Codex Ecosystem";
 
   meta = with lib; {
     description = "Usage analysis tool for OpenAI Codex sessions";

@@ -51,7 +51,8 @@ buildNpmPackage {
           fd
           ripgrep
         ]
-      }
+      } \
+      --set PI_SKIP_VERSION_CHECK 1
   '';
 
   doInstallCheck = true;
@@ -59,6 +60,8 @@ buildNpmPackage {
     versionCheckHook
     versionCheckHomeHook
   ];
+
+  passthru.category = "AI Coding Agents";
 
   meta = {
     description = "A terminal-based coding agent with multi-model support";
