@@ -4,14 +4,17 @@
     "indentWidth": 2,
     "lineWidth": 100,
     "exclude": [
-      ".opencode/**",
+      ".opencode/bun.lock",
+      ".opencode/node_modules/**",
+      ".opencode/skill/**",
       "**/*.md",
       "**/package-lock.json"
     ]
   },
   "lint": {
     "exclude": [
-      ".opencode/**"
+      ".opencode/node_modules/**",
+      ".opencode/skill/**"
     ],
     "rules": {
       "tags": [

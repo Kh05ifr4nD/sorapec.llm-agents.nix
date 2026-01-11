@@ -12,6 +12,9 @@
   programs.shellcheck.enable = true;
   programs.shfmt.enable = true;
 
+  programs.rustfmt.enable = true;
+  programs.rustfmt.edition = "2021";
+
   programs.taplo.enable = true;
   programs.yamlfmt.enable = true;
 
@@ -35,7 +38,6 @@
       "--config"
       "deno.jsonc"
     ];
-    excludes = [ ".opencode/**" ];
     includes = [
       "*.ts"
       "*.json"
