@@ -93,7 +93,7 @@ meta = { ... };
 
 Available categories (in display order):
 
-- **AI Coding Agents** - Main AI coding assistants (codex, gemini-cli, opencode, qwen-code, etc.)
+- **AI Coding Agents** - Main AI coding assistants (codex, gemini-cli, opencode, etc.)
 - **Codex Ecosystem** - Tools specifically for OpenAI Codex (codex-acp, ccusage-codex)
 - **Workflow & Project Management** - Project/spec management tools (backlog-md, beads, spec-kit, sorapec)
 - **Code Review** - Code review tools (coderabbit-cli, tuicr)
@@ -238,7 +238,7 @@ fi
 1. **Custom nix-update arguments**: For packages that need special nix-update flags (e.g., filtering out nightly releases), create a `nixUpdateArgs` file with one argument per line:
 
    ```text
-   # packages/qwen-code/nixUpdateArgs
+   # packages/exampleTool/nixUpdateArgs
    --use-github-releases
    --version-regex
    ^v([0-9]+\.[0-9]+\.[0-9]+)$

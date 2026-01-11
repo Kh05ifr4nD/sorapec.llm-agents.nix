@@ -15,5 +15,4 @@ import "../packages/handy/update.ts";
 import "../packages/ohMyOpencode/update.ts";
 import "../packages/opencode/update.ts";
 import "../packages/pi/update.ts";
-import "../packages/qoder-cli/update.ts";
 import "../packages/sorapec/update.ts";

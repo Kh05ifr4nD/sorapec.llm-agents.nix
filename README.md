@@ -141,26 +141,6 @@ Nix flake packaging AI coding agents and development tools. Automatically update
 - **Nix**: [packages/pi/package.nix](packages/pi/package.nix)
 
 </details>
-<details>
-<summary><strong>qoder-cli</strong> - Qoder AI CLI tool - Terminal-based AI assistant for code development</summary>
-
-- **Source**: binary
-- **License**: unfree
-- **Homepage**: https://qoder.com
-- **Usage**: `nix run github:Kh05ifr4nD/agentNix#qoder-cli -- --help`
-- **Nix**: [packages/qoder-cli/package.nix](packages/qoder-cli/package.nix)
-
-</details>
-<details>
-<summary><strong>qwen-code</strong> - Command-line AI workflow tool for Qwen3-Coder models</summary>
-
-- **Source**: source
-- **License**: Apache-2.0
-- **Homepage**: https://github.com/QwenLM/qwen-code
-- **Usage**: `nix run github:Kh05ifr4nD/agentNix#qwen-code -- --help`
-- **Nix**: [packages/qwen-code/package.nix](packages/qwen-code/package.nix)
-
-</details>
 
 ### Codex Ecosystem
 
@@ -326,7 +306,6 @@ Add to your system configuration:
     codex
     opencode
     gemini-cli
-    qwen-code
     # ... other tools
   ];
 }
@@ -343,9 +322,6 @@ nix run github:Kh05ifr4nD/agentNix#opencode
 
 # Try Gemini CLI
 nix run github:Kh05ifr4nD/agentNix#gemini-cli
-
-# Try Qwen Code
-nix run github:Kh05ifr4nD/agentNix#qwen-code
 
 # etc...
 ```
@@ -364,7 +340,6 @@ nix develop
 # Build a specific package
 nix build .#codex
 nix build .#opencode
-nix build .#qwen-code
 # etc...
 ```
 
