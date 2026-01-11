@@ -1,6 +1,0 @@
-# Packages to build as a smoke test when flake inputs (e.g. nixpkgs) change.
-#
-# One package per line. Blank lines and comments are ignored.
-codex
-gemini-cli
-opencode

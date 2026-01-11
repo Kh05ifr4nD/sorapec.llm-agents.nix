@@ -67,12 +67,11 @@ jobs:
             # Word-splitting is intended: the output is space-separated.
             # shellcheck disable=SC2086
             printf '%s\n' ${{ steps.changes.outputs.packages }}
-            if [ "${{ steps.changes.outputs.infra_changed }}" = "true" ] && [ -f .github/smokePackages.txt ]; then
-              sed \
-                -e 's/#.*$//' \
-                -e 's/[[:space:]]*$//' \
-                -e '/^[[:space:]]*$/d' \
-                .github/smokePackages.txt
+            if [ "${{ steps.changes.outputs.infra_changed }}" = "true" ] && [ -f .github/smokePackages.nix ]; then
+              nix eval \
+                --raw \
+                --accept-flake-config \
+                --expr 'builtins.concatStringsSep "\n" (import ./.github/smokePackages.nix)'
             fi
           }
 
