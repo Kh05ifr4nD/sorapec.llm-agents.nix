@@ -17,7 +17,11 @@ pkgs.mkShellNoCC {
 
     # Agents
     perSystem.self.opencode
+  ]
+  ++ pkgs.lib.optionals (pkgs.system == "x86_64-linux") [
     perSystem.self."oh-my-opencode"
+  ]
+  ++ [
 
     # Formatter
     perSystem.self.formatter

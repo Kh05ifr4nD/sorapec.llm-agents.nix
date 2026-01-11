@@ -14,12 +14,14 @@ jobs:
       - uses: ./.github/actions/setupNix
         with:
           github_token: ${{ github.token }}
-      - name: Nix flake check (eval only)
-        run: nix flake check --no-build --accept-flake-config
+      - name: Nix flake check (eval only, all systems)
+        run: nix flake check --no-build --all-systems --accept-flake-config
       - name: Format check
         run: nix build --accept-flake-config --no-link .#checks.x86_64-linux.pkgs-formatter-check
       - name: Deno scripts check
         run: nix build --accept-flake-config --no-link .#checks.x86_64-linux.pkgs-formatter-denoCheck
+      - name: DevShell check
+        run: nix build --accept-flake-config --no-link .#checks.x86_64-linux.devshell-default
       - name: Detect changed packages
         id: changes
         shell: bash

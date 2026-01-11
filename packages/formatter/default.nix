@@ -52,8 +52,7 @@ let
         cd source
         chmod -R u+w .
 
-        deno task lint
-        deno task typecheck
+        deno task check
 
         touch $out
       '';
