@@ -4,22 +4,22 @@ import { fileURLToPath } from "node:url";
 import { assertString } from "../../scripts/updater/assert.ts";
 import {
   calculateUrlHash,
-  fetchGithubLatestRelease,
+  fetchGitHubLatestRelease,
   readJsonObjectFile,
   shouldUpdate,
   writeJsonFile,
-} from "../../scripts/updater/mod.ts";
-import type { JsonValue } from "../../scripts/updater/mod.ts";
+} from "../../scripts/updater/module.ts";
+import type { JsonValue } from "../../scripts/updater/module.ts";
 
 async function main(): Promise<void> {
-  const scriptDir = dirname(fileURLToPath(import.meta.url));
-  const hashesFilePath = join(scriptDir, "hashes.json");
+  const scriptDirectory = dirname(fileURLToPath(import.meta.url));
+  const hashesFilePath = join(scriptDirectory, "hashes.json");
 
   const data = await readJsonObjectFile(hashesFilePath);
   const current = data["version"];
   assertString(current, `${hashesFilePath}: version must be a string`);
 
-  const latest = await fetchGithubLatestRelease("Kh05ifr4nD", "sorapec");
+  const latest = await fetchGitHubLatestRelease("Kh05ifr4nD", "sorapec");
 
   console.log(`Current: ${current}, Latest: ${latest}`);
 

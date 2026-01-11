@@ -1,5 +1,6 @@
-{ pkgs, perSystem, ... }:
+{ pkgs, ... }:
 import ./package.nix {
   inherit pkgs;
-  inherit (perSystem.self) wrapBuddy versionCheckHomeHook;
+  wrapBuddy = pkgs.callPackage ../wrapBuddy { };
+  versionCheckHomeHook = pkgs.callPackage ../versionCheckHomeHook { };
 }

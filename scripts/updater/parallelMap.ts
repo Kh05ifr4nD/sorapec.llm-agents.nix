@@ -1,17 +1,19 @@
-export async function pMap<T, R>(
+export async function parallelMap<T, R>(
   items: readonly T[],
   mapper: (item: T, index: number) => Promise<R>,
-  opts: Readonly<{ concurrency?: number }> = {},
+  options: Readonly<{ concurrency?: number }> = {},
 ): Promise<R[]> {
-  const concurrency = opts.concurrency ?? items.length;
-  if (!Number.isInteger(concurrency) || concurrency < 1) {
-    throw new Error(`pMap: invalid concurrency: ${String(concurrency)}`);
+  if (items.length === 0) return [];
+
+  const concurrencyLimit = options.concurrency ?? items.length;
+  if (!Number.isInteger(concurrencyLimit) || concurrencyLimit < 1) {
+    throw new Error(`parallelMap: invalid concurrency: ${String(concurrencyLimit)}`);
   }
 
   const results: R[] = new Array(items.length);
   let nextIndex = 0;
 
-  const workerCount = Math.min(concurrency, items.length);
+  const workerCount = Math.min(concurrencyLimit, items.length);
   const workers = Array.from({ length: workerCount }, async () => {
     while (true) {
       const index = nextIndex;
@@ -19,7 +21,7 @@ export async function pMap<T, R>(
       if (index >= items.length) break;
       const item = items[index];
       if (item === undefined) {
-        throw new Error(`pMap: missing item at index ${String(index)}`);
+        throw new Error(`parallelMap: missing item at index ${String(index)}`);
       }
       results[index] = await mapper(item, index);
     }

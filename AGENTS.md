@@ -14,7 +14,7 @@
 - Run without installing: `nix run .#<package> -- --help`.
 - Repo checks (builds + lints): `nix flake check`.
 - Format everything: `nix fmt`.
-- Regenerate README package section: `nix develop --accept-flake-config -c deno run -A scripts/generatePackageDocs.ts`.
+- Regenerate README package section: `nix develop --accept-flake-config -c deno run scripts/generatePackageDocumentation.ts`.
 
 ## Coding Style & Naming Conventions
 
@@ -101,7 +101,7 @@ Available categories (in display order):
 
 #### Custom Maintainers
 
-For maintainers not yet in nixpkgs, define them in `lib/default.nix`:
+For maintainers not yet in nixpkgs, define them in `library/default.nix`:
 
 ```nix
 { inputs, ... }:
@@ -136,7 +136,7 @@ And in `packages/<package>/package.nix`, reference custom maintainers:
 stdenv.mkDerivation rec {
   # ...
   meta = with lib; {
-    maintainers = with flake.lib.maintainers; [ username ];
+    maintainers = with flake.library.maintainers; [ username ];
     # ... other meta
   };
 }

@@ -3,12 +3,12 @@
   buildNpmPackage,
   fetchFromGitHub,
   flake,
-  fetchNpmDepsWithPackuments,
-  npmConfigHook,
+  fetchNpmDependenciesWithPackuments,
+  npmConfigurationHook,
 }:
 
 buildNpmPackage (finalAttrs: {
-  inherit npmConfigHook;
+  npmConfigHook = npmConfigurationHook;
   pname = "openskills";
   version = "1.3.0";
 
@@ -19,7 +19,7 @@ buildNpmPackage (finalAttrs: {
     hash = "sha256-JLPxG8PbCSRLm6DFxSSbE94pf+Ur1ME5uF5f1z2Jhjw=";
   };
 
-  npmDeps = fetchNpmDepsWithPackuments {
+  npmDeps = fetchNpmDependenciesWithPackuments {
     inherit (finalAttrs) src;
     name = "${finalAttrs.pname}-${finalAttrs.version}-npm-deps";
     hash = "sha256-53FSjHKL/DNua/otGoV1boSrqYMAQ91CrUjnGlAAiT8=";
@@ -34,7 +34,7 @@ buildNpmPackage (finalAttrs: {
     homepage = "https://github.com/numman-ali/openskills";
     license = lib.licenses.asl20;
     sourceProvenance = with lib.sourceTypes; [ fromSource ];
-    maintainers = with flake.lib.maintainers; [ ypares ];
+    maintainers = with flake.library.maintainers; [ ypares ];
     mainProgram = "openskills";
     platforms = lib.platforms.all;
   };

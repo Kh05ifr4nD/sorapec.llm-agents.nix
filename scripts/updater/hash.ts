@@ -19,31 +19,31 @@ function parsePrefetchResult(data: unknown, context: string): PrefetchResult {
 
 export async function nixStorePrefetchFile(
   url: string,
-  opts: Readonly<{ unpack?: boolean; hashType?: string }> = {},
+  options: Readonly<{ unpack?: boolean; hashType?: string }> = {},
 ): Promise<PrefetchResult> {
-  const args = ["store", "prefetch-file", "--json"];
-  if (opts.hashType) {
-    args.push("--hash-type", opts.hashType);
+  const argumentList = ["store", "prefetch-file", "--json"];
+  if (options.hashType) {
+    argumentList.push("--hash-type", options.hashType);
   }
-  if (opts.unpack) {
-    args.push("--unpack");
+  if (options.unpack) {
+    argumentList.push("--unpack");
   }
-  args.push(url);
+  argumentList.push(url);
 
-  const output = await runCaptureChecked("nix", args);
+  const output = await runCaptureChecked("nix", argumentList);
   const parsed: unknown = JSON.parse(output.stdout);
   return parsePrefetchResult(parsed, "nix store prefetch-file");
 }
 
 export async function calculateUrlHash(
   url: string,
-  opts: Readonly<{ unpack?: boolean }> = {},
+  options: Readonly<{ unpack?: boolean }> = {},
 ): Promise<string> {
-  const prefetchOpts: { unpack?: boolean; hashType: string } = { hashType: "sha256" };
-  if (opts.unpack !== undefined) {
-    prefetchOpts.unpack = opts.unpack;
+  const prefetchOptions: { unpack?: boolean; hashType: string } = { hashType: "sha256" };
+  if (options.unpack !== undefined) {
+    prefetchOptions.unpack = options.unpack;
   }
-  const result = await nixStorePrefetchFile(url, prefetchOpts);
+  const result = await nixStorePrefetchFile(url, prefetchOptions);
   return result.hash;
 }
 

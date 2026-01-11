@@ -1,15 +1,15 @@
 export type FetchOptions = Readonly<{
   headers?: HeadersInit;
-  timeoutMs?: number;
+  timeoutMilliseconds?: number;
 }>;
 
-async function fetchWithTimeout(url: string, opts: FetchOptions): Promise<Response> {
-  const timeoutMs = opts.timeoutMs ?? 30_000;
+async function fetchWithTimeout(url: string, options: FetchOptions): Promise<Response> {
+  const timeoutMilliseconds = options.timeoutMilliseconds ?? 30_000;
   const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeoutMs);
+  const id = setTimeout(() => controller.abort(), timeoutMilliseconds);
   try {
     return await fetch(url, {
-      headers: opts.headers,
+      headers: options.headers,
       signal: controller.signal,
     });
   } finally {
@@ -17,17 +17,18 @@ async function fetchWithTimeout(url: string, opts: FetchOptions): Promise<Respon
   }
 }
 
-export async function fetchText(url: string, opts: FetchOptions = {}): Promise<string> {
-  const res = await fetchWithTimeout(url, opts);
-  if (!res.ok) {
-    const body = await res.text().catch(() => "");
-    throw new Error(`HTTP ${res.status} ${res.statusText} for ${url}${body ? `\n${body}` : ""}`);
+export async function fetchText(url: string, options: FetchOptions = {}): Promise<string> {
+  const response = await fetchWithTimeout(url, options);
+  if (!response.ok) {
+    const body = await response.text().catch(() => "");
+    throw new Error(
+      `HTTP ${response.status} ${response.statusText} for ${url}${body ? `\n${body}` : ""}`,
+    );
   }
-  return await res.text();
+  return await response.text();
 }
 
-export async function fetchJson(url: string, opts: FetchOptions = {}): Promise<unknown> {
-  const text = await fetchText(url, opts);
-  const parsed: unknown = JSON.parse(text);
-  return parsed;
+export async function fetchJson(url: string, options: FetchOptions = {}): Promise<unknown> {
+  const text = await fetchText(url, options);
+  return JSON.parse(text) as unknown;
 }

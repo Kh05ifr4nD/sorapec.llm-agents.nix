@@ -1,9 +1,4 @@
-{
-  pkgs,
-  perSystem,
-  ...
-}:
-
+{ pkgs, ... }:
 pkgs.callPackage ./package.nix {
-  inherit (perSystem.self) versionCheckHomeHook;
+  versionCheckHomeHook = pkgs.callPackage ../versionCheckHomeHook { };
 }

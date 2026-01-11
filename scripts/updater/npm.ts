@@ -1,8 +1,8 @@
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 import { assertRecord, assertString } from "./assert.ts";
-import { type Env, runChecked } from "./command.ts";
-import { copyDir, ensureDir, fileExists } from "./fs.ts";
+import { type EnvironmentVariables, runChecked } from "./command.ts";
+import { copyDirectory, ensureDirectory, fileExists } from "./fileSystem.ts";
 import { nixStorePrefetchFile } from "./hash.ts";
 import { fetchJson } from "./http.ts";
 
@@ -31,21 +31,24 @@ export async function fetchNpmVersion(packageName: string): Promise<string> {
 export async function extractOrGenerateLockfile(
   tarballUrl: string,
   outputPath: string,
-  opts: Readonly<{ env?: Env }> = {},
+  options: Readonly<{ environmentVariables?: EnvironmentVariables }> = {},
 ): Promise<void> {
   console.log("Extracting/generating package-lock.json from tarball...");
 
-  const prefetch = await nixStorePrefetchFile(tarballUrl, { unpack: true, hashType: "sha256" });
-  const unpackedDir = prefetch.storePath;
+  const prefetchResult = await nixStorePrefetchFile(tarballUrl, {
+    unpack: true,
+    hashType: "sha256",
+  });
+  const unpackedDirectoryPath = prefetchResult.storePath;
 
   const candidates = [
-    join(unpackedDir, "package-lock.json"),
-    join(unpackedDir, "package", "package-lock.json"),
+    join(unpackedDirectoryPath, "package-lock.json"),
+    join(unpackedDirectoryPath, "package", "package-lock.json"),
   ];
 
   for (const candidate of candidates) {
     if (await fileExists(candidate)) {
-      await ensureDir(join(outputPath, ".."));
+      await ensureDirectory(dirname(outputPath));
       await Deno.copyFile(candidate, outputPath);
       console.log("Updated package-lock.json from tarball");
       return;
@@ -54,26 +57,32 @@ export async function extractOrGenerateLockfile(
 
   console.log("No package-lock.json in tarball, generating...");
 
-  const tempDir = await Deno.makeTempDir();
+  const temporaryDirectoryPath = await Deno.makeTempDir();
   try {
-    const workDir = join(tempDir, "package");
-    await copyDir(unpackedDir, workDir);
+    const workingDirectoryPath = join(temporaryDirectoryPath, "package");
+    await copyDirectory(unpackedDirectoryPath, workingDirectoryPath);
 
-    const packageJson = join(workDir, "package.json");
+    const packageJson = join(workingDirectoryPath, "package.json");
     if (!(await fileExists(packageJson))) {
       throw new Error(`package.json not found in unpacked tarball: ${packageJson}`);
     }
 
-    const env: Record<string, string> = { ...Deno.env.toObject(), ...(opts.env ?? {}) };
-    env["HOME"] = tempDir;
+    const environmentVariables: Record<string, string> = {
+      ...Deno.env.toObject(),
+      ...(options.environmentVariables ?? {}),
+      HOME: temporaryDirectoryPath,
+    };
 
     await runChecked(
       "npm",
       ["install", "--package-lock-only", "--ignore-scripts", "--no-audit", "--no-fund"],
-      { cwd: workDir, env },
+      {
+        workingDirectory: workingDirectoryPath,
+        environmentVariables,
+      },
     );
 
-    const generatedLockfile = join(workDir, "package-lock.json");
+    const generatedLockfile = join(workingDirectoryPath, "package-lock.json");
     if (!(await fileExists(generatedLockfile))) {
       throw new Error("Failed to generate package-lock.json");
     }
@@ -81,6 +90,6 @@ export async function extractOrGenerateLockfile(
     await Deno.copyFile(generatedLockfile, outputPath);
     console.log("Generated package-lock.json");
   } finally {
-    await Deno.remove(tempDir, { recursive: true }).catch(() => undefined);
+    await Deno.remove(temporaryDirectoryPath, { recursive: true }).catch(() => undefined);
   }
 }

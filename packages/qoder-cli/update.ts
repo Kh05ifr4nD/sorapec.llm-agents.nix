@@ -8,8 +8,8 @@ import {
   readJsonObjectFile,
   shouldUpdate,
   writeJsonFile,
-} from "../../scripts/updater/mod.ts";
-import type { JsonValue } from "../../scripts/updater/mod.ts";
+} from "../../scripts/updater/module.ts";
+import type { JsonValue } from "../../scripts/updater/module.ts";
 
 const manifestUrl =
   "https://qoder-ide.oss-ap-southeast-1.aliyuncs.com/qodercli/channels/manifest.json";
@@ -47,8 +47,8 @@ function parseManifestFileEntry(value: unknown, context: string): ManifestFileEn
 }
 
 async function main(): Promise<void> {
-  const scriptDir = dirname(fileURLToPath(import.meta.url));
-  const hashesFilePath = join(scriptDir, "hashes.json");
+  const scriptDirectory = dirname(fileURLToPath(import.meta.url));
+  const hashesFilePath = join(scriptDirectory, "hashes.json");
 
   const data = await readJsonObjectFile(hashesFilePath);
   const current = data["version"];

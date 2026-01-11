@@ -1,4 +1,8 @@
-{ pkgs, perSystem }:
+{
+  pkgs,
+  packages,
+  includeAgents ? true,
+}:
 pkgs.mkShellNoCC {
   packages = [
     # Tools needed for update scripts
@@ -14,21 +18,21 @@ pkgs.mkShellNoCC {
     pkgs.nix-update
     pkgs.nodejs
     pkgs.deno
-
-    # Agents
-    perSystem.self.opencode
   ]
-  ++ pkgs.lib.optionals (pkgs.system == "x86_64-linux") [
-    perSystem.self."oh-my-opencode"
+  ++ pkgs.lib.optionals includeAgents [
+    packages.opencode
+  ]
+  ++ pkgs.lib.optionals (includeAgents && pkgs.stdenv.hostPlatform.system == "x86_64-linux") [
+    packages.ohMyOpencode
   ]
   ++ [
 
     # Formatter
-    perSystem.self.formatter
+    packages.formatter
   ];
 
   shellHook = ''
-    export PRJ_ROOT="$PWD"
-    export OPENCODE_CONFIG_DIR="$PRJ_ROOT/.opencode"
+    export PROJECT_ROOT="$PWD"
+    export OPENCODE_CONFIG_DIR="$PROJECT_ROOT/.opencode"
   '';
 }

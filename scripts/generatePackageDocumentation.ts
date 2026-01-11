@@ -10,7 +10,7 @@ type PackageMetadata = Readonly<{
   license: string;
   homepage: string | null;
   sourceType: string;
-  hideFromDocs: boolean;
+  hideFromDocumentation: boolean;
   hasMainProgram: boolean;
   category: string;
 }>;
@@ -35,7 +35,7 @@ function parsePackageMetadata(value: unknown, context: string): PackageMetadata 
   const license = value["license"];
   const homepage = value["homepage"];
   const sourceType = value["sourceType"];
-  const hideFromDocs = value["hideFromDocs"];
+  const hideFromDocumentation = value["hideFromDocumentation"];
   const hasMainProgram = value["hasMainProgram"];
   const category = value["category"];
 
@@ -44,8 +44,8 @@ function parsePackageMetadata(value: unknown, context: string): PackageMetadata 
   assertString(license, `${context}: license`);
   if (homepage !== null) assertString(homepage, `${context}: homepage`);
   assertString(sourceType, `${context}: sourceType`);
-  if (typeof hideFromDocs !== "boolean") {
-    throw new Error(`${context}: hideFromDocs must be a boolean`);
+  if (typeof hideFromDocumentation !== "boolean") {
+    throw new Error(`${context}: hideFromDocumentation must be a boolean`);
   }
   if (typeof hasMainProgram !== "boolean") {
     throw new Error(`${context}: hasMainProgram must be a boolean`);
@@ -58,7 +58,7 @@ function parsePackageMetadata(value: unknown, context: string): PackageMetadata 
     license,
     homepage,
     sourceType,
-    hideFromDocs,
+    hideFromDocumentation,
     hasMainProgram,
     category,
   };
@@ -68,9 +68,9 @@ function parseAllPackagesMetadata(value: unknown): Record<string, PackageMetadat
   assertRecord(value, "nix eval output");
 
   const result: Record<string, PackageMetadata> = {};
-  for (const [pkg, metaOrNull] of Object.entries(value)) {
-    if (metaOrNull === null) continue;
-    result[pkg] = parsePackageMetadata(metaOrNull, `metadata[${pkg}]`);
+  for (const [packageName, metadataOrNull] of Object.entries(value)) {
+    if (metadataOrNull === null) continue;
+    result[packageName] = parsePackageMetadata(metadataOrNull, `metadata[${packageName}]`);
   }
 
   return result;
@@ -80,8 +80,8 @@ export async function getFlakeRef(): Promise<string> {
   const override = Deno.env.get("PACKAGE_DOCS_FLAKE");
   if (override) return override;
 
-  const githubRepo = Deno.env.get("GITHUB_REPOSITORY");
-  if (githubRepo) return `github:${githubRepo}`;
+  const githubRepository = Deno.env.get("GITHUB_REPOSITORY");
+  if (githubRepository) return `github:${githubRepository}`;
 
   const output = await runCaptureChecked("git", ["remote", "get-url", "origin"]);
   const url = output.stdout.trim();
@@ -92,13 +92,13 @@ export async function getFlakeRef(): Promise<string> {
   if (!match) return ".";
 
   const owner = match[1];
-  const repo = match[2];
-  return `github:${owner}/${repo}`;
+  const repository = match[2];
+  return `github:${owner}/${repository}`;
 }
 
 export async function getAllPackagesMetadata(): Promise<Record<string, PackageMetadata>> {
-  const scriptDir = dirname(fileURLToPath(import.meta.url));
-  const nixFile = join(scriptDir, "generatePackageDocs.nix");
+  const scriptDirectory = dirname(fileURLToPath(import.meta.url));
+  const nixFile = join(scriptDirectory, "generatePackageDocumentation.nix");
 
   const output = await runCaptureChecked("nix", [
     "--accept-flake-config",
@@ -112,7 +112,7 @@ export async function getAllPackagesMetadata(): Promise<Record<string, PackageMe
   return parseAllPackagesMetadata(parsed);
 }
 
-function generatePackageDoc(
+function generatePackageDocumentationEntry(
   packageName: string,
   metadata: PackageMetadata,
   flakeRef: string,
@@ -149,46 +149,46 @@ function generatePackageDoc(
   return lines.join("\n");
 }
 
-function generateAllDocs(
+function generateAllDocumentation(
   metadataByPackage: Record<string, PackageMetadata>,
   flakeRef: string,
 ): string {
   const byCategory = new Map<string, Array<[string, PackageMetadata]>>();
 
   const entries = Object.entries(metadataByPackage).sort(([a], [b]) => a.localeCompare(b));
-  for (const [packageName, meta] of entries) {
-    const category = meta.category;
+  for (const [packageName, metadata] of entries) {
+    const category = metadata.category;
     const list = byCategory.get(category) ?? [];
-    list.push([packageName, meta]);
+    list.push([packageName, metadata]);
     byCategory.set(category, list);
   }
 
-  const docs: string[] = [];
+  const documentation: string[] = [];
 
   const seen = new Set<string>();
   for (const category of categoryOrder) {
     const entries = byCategory.get(category);
     if (!entries) continue;
     seen.add(category);
-    docs.push(`### ${category}\n`);
-    for (const [packageName, meta] of entries) {
-      docs.push(generatePackageDoc(packageName, meta, flakeRef));
+    documentation.push(`### ${category}\n`);
+    for (const [packageName, metadata] of entries) {
+      documentation.push(generatePackageDocumentationEntry(packageName, metadata, flakeRef));
     }
-    docs.push("");
+    documentation.push("");
   }
 
   const remainingCategories = [...byCategory.keys()].filter((c) => !seen.has(c)).sort();
   for (const category of remainingCategories) {
     const entries = byCategory.get(category);
     if (!entries) continue;
-    docs.push(`### ${category}\n`);
-    for (const [packageName, meta] of entries) {
-      docs.push(generatePackageDoc(packageName, meta, flakeRef));
+    documentation.push(`### ${category}\n`);
+    for (const [packageName, metadata] of entries) {
+      documentation.push(generatePackageDocumentationEntry(packageName, metadata, flakeRef));
     }
-    docs.push("");
+    documentation.push("");
   }
 
-  return docs.join("\n").trimEnd();
+  return documentation.join("\n").trimEnd();
 }
 
 export async function updateReadme(readmePath: string): Promise<boolean> {
@@ -206,7 +206,7 @@ export async function updateReadme(readmePath: string): Promise<boolean> {
 
   const flakeRef = await getFlakeRef();
   const metadata = await getAllPackagesMetadata();
-  const generated = generateAllDocs(metadata, flakeRef);
+  const generated = generateAllDocumentation(metadata, flakeRef);
 
   const newContent = content.slice(0, beginIndex + beginMarker.length) +
     "\n\n" +
@@ -221,8 +221,8 @@ export async function updateReadme(readmePath: string): Promise<boolean> {
 }
 
 async function main(): Promise<void> {
-  const scriptDir = dirname(fileURLToPath(import.meta.url));
-  const readmePath = join(scriptDir, "..", "README.md");
+  const scriptDirectory = dirname(fileURLToPath(import.meta.url));
+  const readmePath = join(scriptDirectory, "..", "README.md");
 
   const modified = await updateReadme(readmePath);
   console.log(modified ? `Updated ${readmePath}` : `No changes to ${readmePath}`);

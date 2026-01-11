@@ -6,12 +6,12 @@ import {
   calculateDependencyHash,
   calculateUrlHash,
   dummySha256Hash,
-  fetchGithubLatestRelease,
+  fetchGitHubLatestRelease,
   readJsonObjectFile,
   shouldUpdate,
   writeJsonFile,
-} from "../../scripts/updater/mod.ts";
-import type { JsonValue } from "../../scripts/updater/mod.ts";
+} from "../../scripts/updater/module.ts";
+import type { JsonValue } from "../../scripts/updater/module.ts";
 
 function parseCodexVersion(tag: string): string {
   const match = tag.match(/^rust-v(.+)$/);
@@ -23,14 +23,14 @@ function parseCodexVersion(tag: string): string {
 }
 
 async function main(): Promise<void> {
-  const scriptDir = dirname(fileURLToPath(import.meta.url));
-  const hashesFilePath = join(scriptDir, "hashes.json");
+  const scriptDirectory = dirname(fileURLToPath(import.meta.url));
+  const hashesFilePath = join(scriptDirectory, "hashes.json");
 
   const currentData = await readJsonObjectFile(hashesFilePath);
   const current = currentData["version"];
   assertString(current, `${hashesFilePath}: version must be a string`);
 
-  const latestTag = await fetchGithubLatestRelease("openai", "codex");
+  const latestTag = await fetchGitHubLatestRelease("openai", "codex");
   const latest = parseCodexVersion(latestTag);
 
   console.log(`Current: ${current}, Latest: ${latest}`);

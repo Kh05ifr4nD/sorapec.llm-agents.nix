@@ -1,8 +1,8 @@
-export type Env = Readonly<Record<string, string>>;
+export type EnvironmentVariables = Readonly<Record<string, string>>;
 
 export type RunOptions = Readonly<{
-  cwd?: string;
-  env?: Env;
+  workingDirectory?: string;
+  environmentVariables?: EnvironmentVariables;
 }>;
 
 export type CapturedOutput = Readonly<{
@@ -13,15 +13,15 @@ export type CapturedOutput = Readonly<{
 
 export class CommandFailedError extends Error {
   readonly command: string;
-  readonly args: readonly string[];
+  readonly argumentsList: readonly string[];
   readonly code: number;
   readonly stdout: string;
   readonly stderr: string;
 
-  constructor(command: string, args: readonly string[], output: CapturedOutput) {
-    const joinedArgs = args.map((a) => JSON.stringify(a)).join(" ");
+  constructor(command: string, argumentsList: readonly string[], output: CapturedOutput) {
+    const joinedArguments = argumentsList.map((a) => JSON.stringify(a)).join(" ");
     const message = [
-      `Command failed (${output.code}): ${command} ${joinedArgs}`,
+      `Command failed (${output.code}): ${command} ${joinedArguments}`,
       output.stdout.trim() ? `--- stdout ---\n${output.stdout.trimEnd()}` : "",
       output.stderr.trim() ? `--- stderr ---\n${output.stderr.trimEnd()}` : "",
     ]
@@ -31,7 +31,7 @@ export class CommandFailedError extends Error {
     super(message);
     this.name = "CommandFailedError";
     this.command = command;
-    this.args = args;
+    this.argumentsList = argumentsList;
     this.code = output.code;
     this.stdout = output.stdout;
     this.stderr = output.stderr;
@@ -47,16 +47,18 @@ export function trimLines(text: string): string[] {
 
 export async function runStatus(
   command: string,
-  args: readonly string[],
-  opts: RunOptions = {},
+  argumentsList: readonly string[],
+  options: RunOptions = {},
 ): Promise<number> {
   const commandOptions: Deno.CommandOptions = {
-    args: [...args],
+    args: [...argumentsList],
     stdout: "inherit",
     stderr: "inherit",
     stdin: "inherit",
-    ...(opts.env !== undefined ? { env: { ...opts.env } } : {}),
-    ...(opts.cwd !== undefined ? { cwd: opts.cwd } : {}),
+    ...(options.environmentVariables !== undefined
+      ? { env: { ...options.environmentVariables } }
+      : {}),
+    ...(options.workingDirectory !== undefined ? { cwd: options.workingDirectory } : {}),
   };
 
   const status = await new Deno.Command(command, commandOptions).spawn().status;
@@ -66,28 +68,32 @@ export async function runStatus(
 
 export async function runChecked(
   command: string,
-  args: readonly string[],
-  opts: RunOptions = {},
+  argumentsList: readonly string[],
+  options: RunOptions = {},
 ): Promise<void> {
-  const code = await runStatus(command, args, opts);
+  const code = await runStatus(command, argumentsList, options);
   if (code !== 0) {
     throw new Error(
-      `Command failed (${code}): ${command} ${args.map((a) => JSON.stringify(a)).join(" ")}`,
+      `Command failed (${code}): ${command} ${
+        argumentsList.map((a) => JSON.stringify(a)).join(" ")
+      }`,
     );
   }
 }
 
 export async function runCapture(
   command: string,
-  args: readonly string[],
-  opts: RunOptions = {},
+  argumentsList: readonly string[],
+  options: RunOptions = {},
 ): Promise<CapturedOutput> {
   const commandOptions: Deno.CommandOptions = {
-    args: [...args],
+    args: [...argumentsList],
     stdout: "piped",
     stderr: "piped",
-    ...(opts.env !== undefined ? { env: { ...opts.env } } : {}),
-    ...(opts.cwd !== undefined ? { cwd: opts.cwd } : {}),
+    ...(options.environmentVariables !== undefined
+      ? { env: { ...options.environmentVariables } }
+      : {}),
+    ...(options.workingDirectory !== undefined ? { cwd: options.workingDirectory } : {}),
   };
 
   const output = await new Deno.Command(command, commandOptions).output();
@@ -102,12 +108,12 @@ export async function runCapture(
 
 export async function runCaptureChecked(
   command: string,
-  args: readonly string[],
-  opts: RunOptions = {},
+  argumentsList: readonly string[],
+  options: RunOptions = {},
 ): Promise<CapturedOutput> {
-  const output = await runCapture(command, args, opts);
+  const output = await runCapture(command, argumentsList, options);
   if (output.code !== 0) {
-    throw new CommandFailedError(command, args, output);
+    throw new CommandFailedError(command, argumentsList, output);
   }
   return output;
 }

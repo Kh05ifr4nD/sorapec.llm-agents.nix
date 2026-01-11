@@ -11,15 +11,15 @@ import {
   readJsonObjectFile,
   shouldUpdate,
   writeJsonFile,
-} from "../../scripts/updater/mod.ts";
-import type { JsonValue } from "../../scripts/updater/mod.ts";
+} from "../../scripts/updater/module.ts";
+import type { JsonValue } from "../../scripts/updater/module.ts";
 
 const npmPackage = "@mariozechner/pi-coding-agent";
 
 async function main(): Promise<void> {
-  const scriptDir = dirname(fileURLToPath(import.meta.url));
-  const hashesFilePath = join(scriptDir, "hashes.json");
-  const packageLockPath = join(scriptDir, "package-lock.json");
+  const scriptDirectory = dirname(fileURLToPath(import.meta.url));
+  const hashesFilePath = join(scriptDirectory, "hashes.json");
+  const packageLockPath = join(scriptDirectory, "package-lock.json");
 
   const currentData = await readJsonObjectFile(hashesFilePath);
   const current = currentData["version"];

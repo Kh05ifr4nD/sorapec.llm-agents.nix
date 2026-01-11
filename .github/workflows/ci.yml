@@ -52,7 +52,7 @@ jobs:
           )"
           echo "packages=$pkgs" >> "$GITHUB_OUTPUT"
 
-          if grep -Eq '^(flake\\.nix|flake\\.lock|devshell\\.nix|lib/|scripts/)' .github/changedFiles.txt; then
+          if grep -Eq '^(flake\\.nix|flake\\.lock|devshell\\.nix|library/|scripts/)' .github/changedFiles.txt; then
             echo "infra_changed=true" >> "$GITHUB_OUTPUT"
           else
             echo "infra_changed=false" >> "$GITHUB_OUTPUT"

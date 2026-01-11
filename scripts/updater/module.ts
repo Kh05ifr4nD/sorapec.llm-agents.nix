@@ -6,7 +6,7 @@ export {
   nixStorePrefetchFile,
 } from "./hash.ts";
 export { calculatePlatformHashes } from "./platformHash.ts";
-export { fetchGithubLatestRelease } from "./github.ts";
+export { fetchGitHubLatestRelease } from "./github.ts";
 export { extractOrGenerateLockfile, fetchNpmVersion } from "./npm.ts";
 export {
   type JsonValue,

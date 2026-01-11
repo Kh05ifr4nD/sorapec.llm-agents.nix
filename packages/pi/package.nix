@@ -2,8 +2,8 @@
   lib,
   buildNpmPackage,
   fetchurl,
-  fetchNpmDepsWithPackuments,
-  npmConfigHook,
+  fetchNpmDependenciesWithPackuments,
+  npmConfigurationHook,
   fd,
   ripgrep,
   runCommand,
@@ -28,16 +28,17 @@ let
   '';
 in
 buildNpmPackage {
-  inherit npmConfigHook version;
+  inherit version;
+  npmConfigHook = npmConfigurationHook;
   pname = "pi";
 
   src = srcWithLock;
 
-  npmDeps = fetchNpmDepsWithPackuments {
+  npmDeps = fetchNpmDependenciesWithPackuments {
     src = srcWithLock;
     name = "pi-${version}-npm-deps";
     hash = versionData.npmDepsHash;
-    cacheVersion = 2;
+    fetcherVersion = 2;
   };
   makeCacheWritable = true;
 

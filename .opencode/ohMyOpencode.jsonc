@@ -146,7 +146,7 @@
 
         // Keep Claude sessions from hitting hard token limits.
         "preemptive_compaction": true,
-        "preemptive_compaction_threshold": 0.6,
+        "preemptive_compaction_threshold": 0.85,
 
         // Only truncate noisy/high-risk tool outputs (default whitelist).
         "truncate_all_tool_outputs": false,

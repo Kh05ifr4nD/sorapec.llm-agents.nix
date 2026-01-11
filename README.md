@@ -288,13 +288,13 @@ Nix flake packaging AI coding agents and development tools. Automatically update
 ### Uncategorized
 
 <details>
-<summary><strong>oh-my-opencode</strong> - OpenCode plugin - custom agents (oracle, librarian) and enhanced features</summary>
+<summary><strong>ohMyOpencode</strong> - OpenCode plugin - custom agents (oracle, librarian) and enhanced features</summary>
 
 - **Source**: binary
 - **License**: unfree
 - **Homepage**: https://github.com/code-yeongyu/oh-my-opencode
-- **Usage**: `nix run github:Kh05ifr4nD/agentNix#oh-my-opencode -- --help`
-- **Nix**: [packages/oh-my-opencode/package.nix](packages/oh-my-opencode/package.nix)
+- **Usage**: `nix run github:Kh05ifr4nD/agentNix#ohMyOpencode -- --help`
+- **Nix**: [packages/ohMyOpencode/package.nix](packages/ohMyOpencode/package.nix)
 
 </details>
 <details>

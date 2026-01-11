@@ -11,12 +11,12 @@
   makeBinaryWrapper,
   versionCheckHook,
   xsel,
-  fetchNpmDepsWithPackuments,
-  npmConfigHook,
+  fetchNpmDependenciesWithPackuments,
+  npmConfigurationHook,
 }:
 
 buildNpmPackage (finalAttrs: {
-  inherit npmConfigHook;
+  npmConfigHook = npmConfigurationHook;
   pname = "gemini-cli";
   version = "0.23.0";
 
@@ -27,7 +27,7 @@ buildNpmPackage (finalAttrs: {
     hash = "sha256-tl9Iy1M0YxPvUpbIQRl7/P2iRIb5n1cvHEqK2k3OR5I=";
   };
 
-  npmDeps = fetchNpmDepsWithPackuments {
+  npmDeps = fetchNpmDependenciesWithPackuments {
     inherit (finalAttrs) src;
     name = "${finalAttrs.pname}-${finalAttrs.version}-npm-deps";
     hash = "sha256-cKD6vQAiGKlw1bWQQshlc63s9inleC/E6PNs21GM/Jw=";

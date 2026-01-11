@@ -5,12 +5,12 @@ import { assertString } from "../../scripts/updater/assert.ts";
 import {
   calculatePlatformHashes,
   calculateUrlHash,
-  fetchGithubLatestRelease,
+  fetchGitHubLatestRelease,
   readJsonObjectFile,
   shouldUpdate,
   writeJsonFile,
-} from "../../scripts/updater/mod.ts";
-import type { JsonValue } from "../../scripts/updater/mod.ts";
+} from "../../scripts/updater/module.ts";
+import type { JsonValue } from "../../scripts/updater/module.ts";
 
 const platforms = {
   "x86_64-linux": "linux-amd64",
@@ -20,14 +20,14 @@ const platforms = {
 } as const satisfies Record<string, string>;
 
 async function main(): Promise<void> {
-  const scriptDir = dirname(fileURLToPath(import.meta.url));
-  const hashesFilePath = join(scriptDir, "hashes.json");
+  const scriptDirectory = dirname(fileURLToPath(import.meta.url));
+  const hashesFilePath = join(scriptDirectory, "hashes.json");
 
   const data = await readJsonObjectFile(hashesFilePath);
   const current = data["version"];
   assertString(current, `${hashesFilePath}: version must be a string`);
 
-  const latest = await fetchGithubLatestRelease("editor-code-assistant", "eca");
+  const latest = await fetchGitHubLatestRelease("editor-code-assistant", "eca");
 
   console.log(`Current: ${current}, Latest: ${latest}`);
 

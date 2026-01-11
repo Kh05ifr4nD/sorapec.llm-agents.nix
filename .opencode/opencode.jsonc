@@ -3,6 +3,8 @@
     "model": "openai/gpt-5.2",
     "small_model": "openai/gpt-5.1-codex-max",
     "default_agent": "Sisyphus",
+    "enabled_providers": ["openai", "google", "anthropic"],
+    "share": "disabled",
     "provider": {
         "openai": {
             "options": {
@@ -10,17 +12,58 @@
             },
             "models": {
                 "gpt-5.2": {
+                    "id": "gpt-5.2",
+                    "name": "GPT-5.2",
+                    "limit": {
+                        "context": 272000,
+                        "output": 128000
+                    },
+                    "variants": {
+                        "low": {
+                            "include": ["reasoning.encrypted_content"],
+                            "reasoningEffort": "low",
+                            "reasoningSummary": "auto",
+                            "textVerbosity": "high",
+                            "store": false
+                        },
+                        "medium": {
+                            "include": ["reasoning.encrypted_content"],
+                            "reasoningEffort": "medium",
+                            "reasoningSummary": "auto",
+                            "textVerbosity": "high",
+                            "store": false
+                        },
+                        "high": {
+                            "include": ["reasoning.encrypted_content"],
+                            "reasoningEffort": "high",
+                            "reasoningSummary": "auto",
+                            "textVerbosity": "high",
+                            "store": false
+                        },
+                        "xhigh": {
+                            "include": ["reasoning.encrypted_content"],
+                            "reasoningEffort": "xhigh",
+                            "reasoningSummary": "auto",
+                            "textVerbosity": "high",
+                            "store": false
+                        }
+                    },
                     "options": {
                         "include": ["reasoning.encrypted_content"],
                         "reasoningEffort": "xhigh",
+                        "reasoningSummary": "auto",
+                        "textVerbosity": "high",
                         "store": false
                     }
                 },
                 "gpt-5.1-codex-max": {
+                    "id": "gpt-5.1-codex-max",
+                    "name": "GPT-5.1 Codex Max",
                     "options": {
-                        "textVerbosity": "low",
+                        "textVerbosity": "high",
                         "include": ["reasoning.encrypted_content"],
                         "reasoningEffort": "high",
+                        "reasoningSummary": "auto",
                         "store": false
                     }
                 }
@@ -32,6 +75,7 @@
             },
             "models": {
                 "gemini-3-flash-preview": {
+                    "id": "gemini-3-flash-preview",
                     "name": "Gemini 3 Flash Preview",
                     "options": {
                         "thinkingConfig": {
@@ -41,6 +85,7 @@
                     }
                 },
                 "gemini-3-pro-preview": {
+                    "id": "gemini-3-pro-preview",
                     "name": "Gemini 3 Pro Preview",
                     "options": {
                         "thinkingConfig": {
@@ -57,6 +102,8 @@
             },
             "models": {
                 "claude-opus-4-5": {
+                    "id": "claude-opus-4-5",
+                    "name": "Claude Opus 4.5",
                     "options": {
                         "thinking": {
                             "type": "enabled",
@@ -68,24 +115,34 @@
         }
     },
     "permission": {
-        "bash": {
-            "*": "allow",
-            "git status": "allow",
-            "git diff": "allow",
-            "git log": "allow"
-        },
+        "bash": "allow",
         "external_directory": "ask"
     },
     "watcher": {
         "ignore": [
             "**/.git/**",
+            "**/.direnv/**",
+            "**/.opencode/**",
+            "**/.cache/**",
             "**/node_modules/**",
+            "**/.pnpm-store/**",
+            "**/.yarn/**",
+            "**/.venv/**",
+            "**/__pycache__/**",
+            "**/.pytest_cache/**",
             "**/dist/**",
             "**/build/**",
             "**/.next/**",
             "**/out/**",
+            "**/result/**",
             "**/target/**"
         ]
+    },
+    "tui": {
+        "scroll_speed": 1.25,
+        "scroll_acceleration": {
+            "enabled": true
+        }
     },
     "mcp": {
         "firecrawl": {

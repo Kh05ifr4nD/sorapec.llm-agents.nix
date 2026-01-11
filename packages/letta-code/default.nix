@@ -1,9 +1,4 @@
-{
-  pkgs,
-  perSystem,
-  ...
-}:
-let
-  inherit (perSystem.self) versionCheckHomeHook;
-in
-pkgs.callPackage ./package.nix { inherit versionCheckHomeHook; }
+{ pkgs, ... }:
+pkgs.callPackage ./package.nix {
+  versionCheckHomeHook = pkgs.callPackage ../versionCheckHomeHook { };
+}

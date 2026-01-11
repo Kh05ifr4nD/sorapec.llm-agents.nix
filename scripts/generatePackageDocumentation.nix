@@ -3,10 +3,10 @@ let
   packages = builtins.attrNames (flake.packages.x86_64-linux);
 
   extractMetadata =
-    pkg:
+    package:
     let
-      license = pkg.meta.license or null;
-      licenseStr =
+      license = package.meta.license or null;
+      licenseString =
         if license == null then
           "Check package"
         else if builtins.isAttrs license && license ? spdxId then
@@ -19,7 +19,7 @@ let
           "Check package";
 
       # Determine source type from sourceProvenance
-      sourceProvenance = pkg.meta.sourceProvenance or null;
+      sourceProvenance = package.meta.sourceProvenance or null;
       sourceType =
         if sourceProvenance != null then
           if builtins.isList sourceProvenance then
@@ -37,14 +37,14 @@ let
           "unknown";
     in
     {
-      description = pkg.meta.description or "No description available";
-      version = pkg.version or "unknown";
-      license = licenseStr;
-      homepage = pkg.meta.homepage or null;
+      description = package.meta.description or "No description available";
+      version = package.version or "unknown";
+      license = licenseString;
+      homepage = package.meta.homepage or null;
       sourceType = sourceType;
-      hideFromDocs = pkg.passthru.hideFromDocs or false;
-      hasMainProgram = builtins.hasAttr "mainProgram" pkg.meta;
-      category = pkg.passthru.category or "Uncategorized";
+      hideFromDocumentation = package.passthru.hideFromDocs or false;
+      hasMainProgram = builtins.hasAttr "mainProgram" package.meta;
+      category = package.passthru.category or "Uncategorized";
     };
 
   results = builtins.listToAttrs (
@@ -52,11 +52,13 @@ let
       name = name;
       value =
         let
-          pkg = flake.packages.x86_64-linux.${name} or null;
-          metadata = if pkg != null then extractMetadata pkg else null;
+          package = flake.packages.x86_64-linux.${name} or null;
+          metadata = if package != null then extractMetadata package else null;
         in
-        # Filter out packages with hideFromDocs = true or no mainProgram
-        if metadata != null && !(metadata.hideFromDocs or false) && (metadata.hasMainProgram or false) then
+        # Filter out packages with hideFromDocumentation = true or no mainProgram
+        if
+          metadata != null && !(metadata.hideFromDocumentation or false) && (metadata.hasMainProgram or false)
+        then
           metadata
         else
           null;

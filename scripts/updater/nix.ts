@@ -8,35 +8,46 @@ import {
 
 export type NixOptions = Readonly<RunOptions & { acceptFlakeConfig?: boolean }>;
 
-function withAcceptFlakeConfig(args: readonly string[], acceptFlakeConfig: boolean): string[] {
-  return acceptFlakeConfig ? ["--accept-flake-config", ...args] : [...args];
+function withAcceptFlakeConfig(
+  argumentList: readonly string[],
+  acceptFlakeConfig: boolean,
+): string[] {
+  return acceptFlakeConfig ? ["--accept-flake-config", ...argumentList] : [...argumentList];
 }
 
 export async function nixEvalRaw(
   attr: string,
-  opts: Readonly<NixOptions & { impure?: boolean }> = {},
+  options: Readonly<NixOptions & { impure?: boolean }> = {},
 ): Promise<string> {
-  const args = ["eval", "--raw", ...(opts.impure ? ["--impure"] : []), attr];
+  const argumentList = ["eval", "--raw", ...(options.impure ? ["--impure"] : []), attr];
   const output = await runCaptureChecked(
     "nix",
-    withAcceptFlakeConfig(args, opts.acceptFlakeConfig ?? true),
-    opts,
+    withAcceptFlakeConfig(argumentList, options.acceptFlakeConfig ?? true),
+    options,
   );
   return output.stdout.trim();
 }
 
 export async function nixBuild(
   attr: string,
-  opts: NixOptions = {},
+  options: NixOptions = {},
 ): Promise<void> {
-  const args = ["build", "--log-format", "bar-with-logs", attr];
-  await runChecked("nix", withAcceptFlakeConfig(args, opts.acceptFlakeConfig ?? true), opts);
+  const argumentList = ["build", "--log-format", "bar-with-logs", attr];
+  await runChecked(
+    "nix",
+    withAcceptFlakeConfig(argumentList, options.acceptFlakeConfig ?? true),
+    options,
+  );
 }
 
 export async function nixBuildCapture(
   attr: string,
-  opts: NixOptions = {},
+  options: NixOptions = {},
 ): Promise<CapturedOutput> {
-  const args = ["build", "--log-format", "bar-with-logs", attr];
-  return await runCapture("nix", withAcceptFlakeConfig(args, opts.acceptFlakeConfig ?? true), opts);
+  const argumentList = ["build", "--log-format", "bar-with-logs", attr];
+  return await runCapture(
+    "nix",
+    withAcceptFlakeConfig(argumentList, options.acceptFlakeConfig ?? true),
+    options,
+  );
 }

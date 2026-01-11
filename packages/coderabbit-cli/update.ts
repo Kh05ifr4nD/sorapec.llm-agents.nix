@@ -8,8 +8,8 @@ import {
   readJsonObjectFile,
   shouldUpdate,
   writeJsonFile,
-} from "../../scripts/updater/mod.ts";
-import type { JsonValue } from "../../scripts/updater/mod.ts";
+} from "../../scripts/updater/module.ts";
+import type { JsonValue } from "../../scripts/updater/module.ts";
 
 const versionUrl = "https://cli.coderabbit.ai/releases/latest/VERSION";
 
@@ -25,8 +25,8 @@ async function fetchVersion(): Promise<string> {
 }
 
 async function main(): Promise<void> {
-  const scriptDir = dirname(fileURLToPath(import.meta.url));
-  const hashesFilePath = join(scriptDir, "hashes.json");
+  const scriptDirectory = dirname(fileURLToPath(import.meta.url));
+  const hashesFilePath = join(scriptDirectory, "hashes.json");
 
   const data = await readJsonObjectFile(hashesFilePath);
   const current = data["version"];

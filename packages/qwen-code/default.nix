@@ -1,8 +1,8 @@
 { pkgs }:
 let
-  npmPackumentSupport = pkgs.callPackage ../../lib/fetch-npm-deps.nix { };
+  npmPackumentSupport = pkgs.callPackage ../../library/fetchNpmDependencies.nix { };
 in
 pkgs.callPackage ./package.nix {
   darwinOpenptyHook = pkgs.callPackage ../darwinOpenptyHook { };
-  inherit (npmPackumentSupport) fetchNpmDepsWithPackuments npmConfigHook;
+  inherit (npmPackumentSupport) fetchNpmDependenciesWithPackuments npmConfigurationHook;
 }

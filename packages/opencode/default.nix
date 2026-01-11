@@ -1,8 +1,5 @@
-{
-  pkgs,
-  perSystem,
-  ...
-}:
+{ pkgs, ... }:
 pkgs.callPackage ./package.nix {
-  inherit (perSystem.self) wrapBuddy versionCheckHomeHook;
+  wrapBuddy = pkgs.callPackage ../wrapBuddy { };
+  versionCheckHomeHook = pkgs.callPackage ../versionCheckHomeHook { };
 }

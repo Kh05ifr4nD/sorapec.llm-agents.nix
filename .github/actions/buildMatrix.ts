@@ -13,7 +13,7 @@ type Matrix = Readonly<{
   include: MatrixItem[];
 }>;
 
-function getEnv(name: string, fallback = ""): string {
+function getEnvironmentVariable(name: string, fallback = ""): string {
   return Deno.env.get(name) ?? fallback;
 }
 
@@ -83,13 +83,13 @@ async function discoverPackages(
           (builtins.filter (x: x != null) (map getVersion config.filter))
   `;
 
-  const env = {
+  const environmentVariables = {
     ...Deno.env.toObject(),
     DISCOVERY_CONFIG: config,
   };
 
   const result = await runCapture("nix", ["eval", "--json", "--impure", "--expr", expr], {
-    env,
+    environmentVariables,
   });
 
   if (result.code !== 0) {
@@ -111,9 +111,9 @@ async function discoverPackages(
 
   if (packagesFilter) {
     const found = new Set(Object.keys(versions));
-    for (const pkg of packagesFilter.split(/\s+/).filter(Boolean)) {
-      if (!found.has(pkg)) {
-        console.log(`Warning: Package ${pkg} not found or has no version`);
+    for (const packageName of packagesFilter.split(/\s+/).filter(Boolean)) {
+      if (!found.has(packageName)) {
+        console.log(`Warning: Package ${packageName} not found or has no version`);
       }
     }
   }
@@ -151,15 +151,15 @@ async function discoverFlakeInputs(inputsFilter: string | undefined): Promise<Ma
 }
 
 async function appendGithubOutput(line: string): Promise<void> {
-  const githubOutput = getEnv("GITHUB_OUTPUT");
+  const githubOutput = getEnvironmentVariable("GITHUB_OUTPUT");
   if (!githubOutput) return;
   await Deno.writeTextFile(githubOutput, `${line}\n`, { append: true });
 }
 
 async function main(): Promise<void> {
-  const packages = getEnv("PACKAGES").trim();
-  const inputs = getEnv("INPUTS").trim();
-  const system = getEnv("SYSTEM", "x86_64-linux").trim();
+  const packages = getEnvironmentVariable("PACKAGES").trim();
+  const inputs = getEnvironmentVariable("INPUTS").trim();
+  const system = getEnvironmentVariable("SYSTEM", "x86_64-linux").trim();
 
   console.log("=== Discovery Configuration ===");
   console.log(`PACKAGES: ${packages || "<all>"}`);
@@ -192,7 +192,7 @@ async function main(): Promise<void> {
   await appendGithubOutput(`matrix=${matrixJson}`);
   await appendGithubOutput(`has_items=${String(hasItems)}`);
 
-  if (!getEnv("GITHUB_OUTPUT")) {
+  if (!getEnvironmentVariable("GITHUB_OUTPUT")) {
     console.log();
     console.log("=== GitHub Actions Output Format ===");
     console.log(`matrix=${matrixJson}`);

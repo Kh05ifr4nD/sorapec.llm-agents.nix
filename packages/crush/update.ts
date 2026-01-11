@@ -6,22 +6,22 @@ import {
   calculateDependencyHash,
   calculateUrlHash,
   dummySha256Hash,
-  fetchGithubLatestRelease,
+  fetchGitHubLatestRelease,
   readJsonObjectFile,
   shouldUpdate,
   writeJsonFile,
-} from "../../scripts/updater/mod.ts";
-import type { JsonValue } from "../../scripts/updater/mod.ts";
+} from "../../scripts/updater/module.ts";
+import type { JsonValue } from "../../scripts/updater/module.ts";
 
 async function main(): Promise<void> {
-  const scriptDir = dirname(fileURLToPath(import.meta.url));
-  const hashesFilePath = join(scriptDir, "hashes.json");
+  const scriptDirectory = dirname(fileURLToPath(import.meta.url));
+  const hashesFilePath = join(scriptDirectory, "hashes.json");
 
   const currentData = await readJsonObjectFile(hashesFilePath);
   const current = currentData["version"];
   assertString(current, `${hashesFilePath}: version must be a string`);
 
-  const latest = await fetchGithubLatestRelease("charmbracelet", "crush");
+  const latest = await fetchGitHubLatestRelease("charmbracelet", "crush");
 
   console.log(`Current: ${current}, Latest: ${latest}`);
 

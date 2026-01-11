@@ -1,12 +1,11 @@
 {
   pkgs,
-  perSystem,
   ...
 }:
 let
-  npmPackumentSupport = pkgs.callPackage ../../lib/fetch-npm-deps.nix { };
+  npmPackumentSupport = pkgs.callPackage ../../library/fetchNpmDependencies.nix { };
 in
 pkgs.callPackage ./package.nix {
-  inherit (perSystem.self) versionCheckHomeHook;
-  inherit (npmPackumentSupport) fetchNpmDepsWithPackuments npmConfigHook;
+  versionCheckHomeHook = pkgs.callPackage ../versionCheckHomeHook { };
+  inherit (npmPackumentSupport) fetchNpmDependenciesWithPackuments npmConfigurationHook;
 }

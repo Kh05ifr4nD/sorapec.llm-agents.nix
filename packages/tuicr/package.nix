@@ -69,6 +69,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
     mainProgram = "tuicr";
     sourceProvenance = with lib.sourceTypes; [ fromSource ];
     platforms = lib.platforms.unix;
-    maintainers = with flake.lib.maintainers; [ ypares ];
+    maintainers = with flake.library.maintainers; [ ypares ];
   };
 })

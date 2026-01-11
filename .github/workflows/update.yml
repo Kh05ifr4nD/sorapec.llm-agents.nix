@@ -41,7 +41,7 @@ jobs:
           PACKAGES: ${{ github.event.inputs.packages || '' }}
           INPUTS: ${{ github.event.inputs.flake_inputs || '' }}
           SYSTEM: ${{ github.event.inputs.system || 'x86_64-linux' }}
-        run: nix develop --accept-flake-config -c deno run --allow-run --allow-read --allow-write --allow-env .github/actions/buildMatrix.ts
+        run: nix develop --accept-flake-config .#automation -c deno run --allow-run --allow-read --allow-write --allow-env .github/actions/buildMatrix.ts
   update:
     needs: discover
     if: needs.discover.outputs.has_items == 'true'
@@ -78,7 +78,7 @@ jobs:
           AUTO_MERGE: ${{ github.event.inputs.auto_merge || 'true' }}
           SYSTEM: ${{ github.event.inputs.system || 'x86_64-linux' }}
         run: |
-          nix develop --accept-flake-config -c deno run --allow-run --allow-read --allow-write --allow-env .github/actions/updateItem.ts \
+          nix develop --accept-flake-config .#automation -c deno run --allow-run --allow-read --allow-write --allow-env .github/actions/updateItem.ts \
             "${{ matrix.type }}" \
             "${{ matrix.name }}" \
             "${{ matrix.currentVersion }}"

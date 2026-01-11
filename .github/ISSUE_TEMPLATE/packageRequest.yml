@@ -10,7 +10,7 @@ body:
         where you package and maintain it yourself.
 
         See existing packages in `packages/` for examples, and `AGENTS.md` for guidelines.
-        Add yourself to `lib/default.nix` if you're not in nixpkgs maintainers.
+        Add yourself to `library/default.nix` if you're not in nixpkgs maintainers.
   - type: input
     id: tool-name
     attributes:

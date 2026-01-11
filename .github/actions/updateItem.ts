@@ -1,28 +1,28 @@
 import { assertArray, assertRecord } from "../../scripts/updater/assert.ts";
 import {
-  type Env,
+  type EnvironmentVariables,
   runCapture,
   runCaptureChecked,
   runChecked,
   runStatus,
   trimLines,
 } from "../../scripts/updater/command.ts";
-import { fileExists } from "../../scripts/updater/fs.ts";
-import { updateReadme } from "../../scripts/generatePackageDocs.ts";
+import { fileExists } from "../../scripts/updater/fileSystem.ts";
+import { updateReadme } from "../../scripts/generatePackageDocumentation.ts";
 
 type UpdateType = "package" | "flake-input";
 
-function getEnv(name: string, fallback = ""): string {
+function getEnvironmentVariable(name: string, fallback = ""): string {
   return Deno.env.get(name) ?? fallback;
 }
 
-function hasEnv(name: string): boolean {
+function hasEnvironmentVariable(name: string): boolean {
   return Deno.env.has(name);
 }
 
 async function readSmokePackages(): Promise<string> {
-  if (hasEnv("SMOKE_PACKAGES")) {
-    return getEnv("SMOKE_PACKAGES");
+  if (hasEnvironmentVariable("SMOKE_PACKAGES")) {
+    return getEnvironmentVariable("SMOKE_PACKAGES");
   }
 
   const file = ".github/smokePackages.txt";
@@ -39,22 +39,26 @@ async function readSmokePackages(): Promise<string> {
 function splitLabels(labels: string): string[] {
   return labels
     .split(",")
-    .map((l) => l.trim())
+    .map((label) => label.trim())
     .filter(Boolean);
 }
 
-async function gitPorcelain(env: Env): Promise<string> {
-  const result = await runCaptureChecked("git", ["status", "--porcelain"], { env });
+async function gitPorcelain(environmentVariables: EnvironmentVariables): Promise<string> {
+  const result = await runCaptureChecked("git", ["status", "--porcelain"], {
+    environmentVariables,
+  });
   return result.stdout;
 }
 
 async function nixEvalPackageVersion(
   name: string,
   system: string,
-  env: Env,
+  environmentVariables: EnvironmentVariables,
 ): Promise<string> {
-  const attr = `.#packages.${system}."${name}".version`;
-  const result = await runCapture("nix", ["eval", "--raw", "--impure", attr], { env });
+  const nixAttribute = `.#packages.${system}."${name}".version`;
+  const result = await runCapture("nix", ["eval", "--raw", "--impure", nixAttribute], {
+    environmentVariables,
+  });
   if (result.code !== 0) return "unknown";
   return result.stdout.trim() || "unknown";
 }
@@ -80,15 +84,15 @@ async function readFlakeInputRev(name: string): Promise<string> {
   return rev.slice(0, 8);
 }
 
-async function ghPrNumberForBranch(
+async function gitHubPullRequestNumberForBranch(
   branch: string,
-  env: Env,
+  environmentVariables: EnvironmentVariables,
 ): Promise<number | null> {
   const result = await runCaptureChecked(
     "gh",
     ["pr", "list", "--head", branch, "--json", "number"],
     {
-      env,
+      environmentVariables,
     },
   );
 
@@ -103,31 +107,31 @@ async function ghPrNumberForBranch(
 }
 
 async function main(): Promise<void> {
-  const [typeArg, name, currentVersion] = Deno.args;
-  if (!typeArg || !name || !currentVersion) {
+  const [typeArgument, name, currentVersion] = Deno.args;
+  if (!typeArgument || !name || !currentVersion) {
     throw new Error("Usage: updateItem.ts <package|flake-input> <name> <currentVersion>");
   }
-  const type = typeArg as UpdateType;
+  const type = typeArgument as UpdateType;
   if (type !== "package" && type !== "flake-input") {
-    throw new Error(`Unknown type '${typeArg}' (expected 'package' or 'flake-input')`);
+    throw new Error(`Unknown type '${typeArgument}' (expected 'package' or 'flake-input')`);
   }
 
-  const system = getEnv("SYSTEM", "x86_64-linux");
-  const prLabels = getEnv("PR_LABELS", "dependencies,automated");
-  const autoMerge = getEnv("AUTO_MERGE", "false");
+  const system = getEnvironmentVariable("SYSTEM", "x86_64-linux");
+  const pullRequestLabels = getEnvironmentVariable("PR_LABELS", "dependencies,automated");
+  const autoMerge = getEnvironmentVariable("AUTO_MERGE", "false");
 
-  const ghToken = getEnv("GH_TOKEN");
-  if (!ghToken) {
+  const githubToken = getEnvironmentVariable("GH_TOKEN");
+  if (!githubToken) {
     console.error("Error: GH_TOKEN is not set");
     Deno.exit(1);
   }
 
-  const env = {
+  const environmentVariables = {
     ...Deno.env.toObject(),
     NIX_PATH: "nixpkgs=flake:nixpkgs",
   };
 
-  const status = await gitPorcelain(env);
+  const status = await gitPorcelain(environmentVariables);
   if (status.trim()) {
     console.error("Error: working tree is not clean before update");
     console.error(status.trimEnd());
@@ -158,34 +162,36 @@ async function main(): Promise<void> {
           "--allow-net",
           updaterPath,
         ],
-        { env },
+        { environmentVariables },
       );
     } else {
       console.log(`No update.ts for ${name}; running nix-update`);
-      const argsPathCandidates = [
+      const argumentsFilePathCandidates = [
         `packages/${name}/nixUpdateArgs`,
         `packages/${name}/nix-update-args`,
       ];
 
-      let extraArgs: string[] = [];
-      for (const argsPath of argsPathCandidates) {
-        if (!(await fileExists(argsPath))) continue;
-        extraArgs = (await Deno.readTextFile(argsPath))
+      let additionalArguments: string[] = [];
+      for (const argumentsFilePath of argumentsFilePathCandidates) {
+        if (!(await fileExists(argumentsFilePath))) continue;
+        additionalArguments = (await Deno.readTextFile(argumentsFilePath))
           .split(/\r?\n/)
-          .map((l) => l.replace(/#.*$/, "").trim())
+          .map((line) => line.replace(/#.*$/, "").trim())
           .filter(Boolean);
         break;
       }
 
-      await runChecked("nix-update", ["--flake", name, ...extraArgs], { env });
+      await runChecked("nix-update", ["--flake", name, ...additionalArguments], {
+        environmentVariables,
+      });
     }
   } else {
     console.log(`Running nix flake update ${name}`);
-    await runChecked("nix", ["flake", "update", name], { env });
+    await runChecked("nix", ["flake", "update", name], { environmentVariables });
   }
 
   {
-    const diff = await runStatus("git", ["diff", "--quiet"], { env });
+    const diff = await runStatus("git", ["diff", "--quiet"], { environmentVariables });
     if (diff === 0) {
       console.log("No changes detected; skipping PR.");
       return;
@@ -196,10 +202,10 @@ async function main(): Promise<void> {
   await updateReadme("README.md");
 
   console.log("Formatting repository...");
-  await runChecked("nix", ["fmt"], { env });
+  await runChecked("nix", ["fmt"], { environmentVariables });
 
   {
-    const diff = await runStatus("git", ["diff", "--quiet"], { env });
+    const diff = await runStatus("git", ["diff", "--quiet"], { environmentVariables });
     if (diff === 0) {
       console.log("No changes detected after formatting; skipping PR.");
       return;
@@ -208,7 +214,7 @@ async function main(): Promise<void> {
 
   let newVersion = "unknown";
   if (type === "package") {
-    newVersion = await nixEvalPackageVersion(name, system, env);
+    newVersion = await nixEvalPackageVersion(name, system, environmentVariables);
   } else {
     newVersion = await readFlakeInputRev(name);
   }
@@ -221,7 +227,7 @@ async function main(): Promise<void> {
       "--no-link",
       `.#checks.${system}.pkgs-${name}`,
     ], {
-      env,
+      environmentVariables,
     });
     await runChecked("nix", [
       "build",
@@ -229,7 +235,7 @@ async function main(): Promise<void> {
       "--no-link",
       `.#checks.${system}.pkgs-formatter-check`,
     ], {
-      env,
+      environmentVariables,
     });
     await runChecked("nix", [
       "build",
@@ -237,17 +243,19 @@ async function main(): Promise<void> {
       "--no-link",
       `.#checks.${system}.pkgs-formatter-denoCheck`,
     ], {
-      env,
+      environmentVariables,
     });
   } else {
-    await runChecked("nix", ["flake", "check", "--no-build", "--accept-flake-config"], { env });
+    await runChecked("nix", ["flake", "check", "--no-build", "--accept-flake-config"], {
+      environmentVariables,
+    });
     await runChecked("nix", [
       "build",
       "--accept-flake-config",
       "--no-link",
       `.#checks.${system}.pkgs-formatter-check`,
     ], {
-      env,
+      environmentVariables,
     });
     await runChecked("nix", [
       "build",
@@ -255,31 +263,34 @@ async function main(): Promise<void> {
       "--no-link",
       `.#checks.${system}.pkgs-formatter-denoCheck`,
     ], {
-      env,
+      environmentVariables,
     });
 
     const smokePackages = (await readSmokePackages()).trim();
     if (smokePackages) {
       console.log("=== Smoke build (flake input update) ===");
       console.log(smokePackages);
-      for (const pkg of smokePackages.split(/\s+/).filter(Boolean)) {
+      for (const packageName of smokePackages.split(/\s+/).filter(Boolean)) {
         await runChecked("nix", [
           "build",
           "--accept-flake-config",
           "--no-link",
-          `.#checks.${system}.pkgs-${pkg}`,
+          `.#checks.${system}.pkgs-${packageName}`,
         ], {
-          env,
+          environmentVariables,
         });
       }
     }
   }
 
   const changedFiles = trimLines(
-    (await runCapture("git", ["diff", "--name-only"], { env })).stdout,
+    (await runCapture("git", ["diff", "--name-only"], { environmentVariables })).stdout,
   );
   const untrackedFiles = trimLines(
-    (await runCapture("git", ["ls-files", "--others", "--exclude-standard"], { env })).stdout,
+    (await runCapture("git", ["ls-files", "--others", "--exclude-standard"], {
+      environmentVariables,
+    }))
+      .stdout,
   );
   const allFiles = Array.from(new Set([...changedFiles, ...untrackedFiles])).sort();
 
@@ -315,53 +326,59 @@ async function main(): Promise<void> {
   }
 
   const branch = type === "package" ? `update/${name}` : `update/flake-input/${name}`;
-  const prTitle = type === "package"
+  const pullRequestTitle = type === "package"
     ? `${name}: ${currentVersion} -> ${newVersion}`
     : `flake.lock: Update ${name}`;
-  const prBody = type === "package"
+  const pullRequestBody = type === "package"
     ? `Automated update of ${name} from ${currentVersion} to ${newVersion}.`
     : `This PR updates the flake input \`${name}\`.\n\n- ${name}: \`${currentVersion}\` → \`${newVersion}\``;
 
   console.log("=== Create/Update PR ===");
   console.log(`branch=${branch}`);
-  console.log(`title=${prTitle}`);
+  console.log(`title=${pullRequestTitle}`);
   console.log();
 
-  await runChecked("git", ["switch", "-C", branch], { env });
+  await runChecked("git", ["switch", "-C", branch], { environmentVariables });
 
   if (type === "package") {
-    await runChecked("git", ["add", `packages/${name}`, "README.md"], { env });
+    await runChecked("git", ["add", `packages/${name}`, "README.md"], { environmentVariables });
   } else {
-    await runChecked("git", ["add", "flake.lock", "README.md"], { env });
+    await runChecked("git", ["add", "flake.lock", "README.md"], { environmentVariables });
   }
 
   {
-    const staged = await runStatus("git", ["diff", "--cached", "--quiet"], { env });
+    const staged = await runStatus("git", ["diff", "--cached", "--quiet"], {
+      environmentVariables,
+    });
     if (staged === 0) {
       console.error("Error: nothing staged for commit");
       Deno.exit(1);
     }
   }
 
-  await runChecked("git", ["commit", "-m", prTitle, "--signoff"], { env });
-  await runChecked("git", ["push", "--force", "--set-upstream", "origin", branch], { env });
+  await runChecked("git", ["commit", "-m", pullRequestTitle, "--signoff"], {
+    environmentVariables,
+  });
+  await runChecked("git", ["push", "--force", "--set-upstream", "origin", branch], {
+    environmentVariables,
+  });
 
-  const labelArgs = splitLabels(prLabels).flatMap((label) => ["--label", label]);
+  const labelArguments = splitLabels(pullRequestLabels).flatMap((label) => ["--label", label]);
 
-  let prNumber = await ghPrNumberForBranch(branch, env);
-  if (prNumber !== null) {
-    console.log(`Updating existing PR #${prNumber}`);
+  let pullRequestNumber = await gitHubPullRequestNumberForBranch(branch, environmentVariables);
+  if (pullRequestNumber !== null) {
+    console.log(`Updating existing PR #${pullRequestNumber}`);
     await runChecked("gh", [
       "pr",
       "edit",
-      String(prNumber),
+      String(pullRequestNumber),
       "--title",
-      prTitle,
+      pullRequestTitle,
       "--body",
-      prBody,
-      ...labelArgs,
+      pullRequestBody,
+      ...labelArguments,
     ], {
-      env,
+      environmentVariables,
     });
   } else {
     console.log("Creating new PR");
@@ -369,24 +386,26 @@ async function main(): Promise<void> {
       "pr",
       "create",
       "--title",
-      prTitle,
+      pullRequestTitle,
       "--body",
-      prBody,
+      pullRequestBody,
       "--base",
       "main",
       "--head",
       branch,
-      ...labelArgs,
+      ...labelArguments,
     ], {
-      env,
+      environmentVariables,
     });
-    prNumber = await ghPrNumberForBranch(branch, env);
+    pullRequestNumber = await gitHubPullRequestNumberForBranch(branch, environmentVariables);
   }
 
-  if (autoMerge === "true" && prNumber !== null) {
-    console.log(`Enabling auto-merge for PR #${prNumber}`);
+  if (autoMerge === "true" && pullRequestNumber !== null) {
+    console.log(`Enabling auto-merge for PR #${pullRequestNumber}`);
     try {
-      await runChecked("gh", ["pr", "merge", String(prNumber), "--auto", "--squash"], { env });
+      await runChecked("gh", ["pr", "merge", String(pullRequestNumber), "--auto", "--squash"], {
+        environmentVariables,
+      });
     } catch {
       console.log("Note: auto-merge may require branch protection rules");
     }

@@ -2,13 +2,13 @@
   buildNpmPackage,
   fetchzip,
   lib,
-  fetchNpmDepsWithPackuments,
-  npmConfigHook,
+  fetchNpmDependenciesWithPackuments,
+  npmConfigurationHook,
   ripgrep,
   versionCheckHook,
 }:
 buildNpmPackage (finalAttrs: {
-  inherit npmConfigHook;
+  npmConfigHook = npmConfigurationHook;
   pname = "kilocode-cli";
   version = "0.19.2";
 
@@ -17,7 +17,7 @@ buildNpmPackage (finalAttrs: {
     hash = "sha256-PYQem0IDH63NryZhEBPY+kWJg3+CzVM5rQZzP2zR484=";
   };
 
-  npmDeps = fetchNpmDepsWithPackuments {
+  npmDeps = fetchNpmDependenciesWithPackuments {
     inherit (finalAttrs) src;
     name = "${finalAttrs.pname}-${finalAttrs.version}-npm-deps";
     hash = "sha256-/HgU1ZldV8XsDpy+yhxNtVAAtTOaOKWzZAA6MUQCOEo=";

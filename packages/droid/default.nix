@@ -1,8 +1,4 @@
-{
-  pkgs,
-  perSystem,
-  ...
-}:
+{ pkgs, ... }:
 pkgs.callPackage ./package.nix {
-  inherit (perSystem.self) wrapBuddy;
+  wrapBuddy = pkgs.callPackage ../wrapBuddy { };
 }

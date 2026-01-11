@@ -49,7 +49,7 @@ stdenv.mkDerivation rec {
     homepage = "https://github.com/ryoppippi/ccusage";
     license = licenses.mit;
     sourceProvenance = with lib.sourceTypes; [ binaryBytecode ];
-    maintainers = with flake.lib.maintainers; [ ryoppippi ];
+    maintainers = with flake.library.maintainers; [ ryoppippi ];
     mainProgram = "ccusage-codex";
     platforms = platforms.all;
   };
